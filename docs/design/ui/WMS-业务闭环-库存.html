@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>实时库存 · WMS V1.0 效果图</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fb; color: #1f2937; font-size: 13px; }
+  .layout { display: flex; min-height: 100vh; }
+  .sider { width: 232px; background: #fff; border-right: 1px solid #e2e7f0; flex: 0 0 232px; }
+  .logo { height: 56px; background: linear-gradient(135deg, #e1251b 0%, #ff6a3d 100%); color: #fff; display: flex; align-items: center; padding: 0 18px; font-weight: 600; font-size: 15px; }
+  .menu-group { padding: 12px 0 6px; }
+  .menu-title { padding: 0 18px 6px; font-size: 11px; color: #a5aec4; }
+  .menu-item { padding: 9px 18px; color: #4b5568; font-size: 13px; }
+  .menu-item.active { background: #fdecea; color: #e1251b; font-weight: 500; box-shadow: inset -3px 0 0 #e1251b; }
+  .main { flex: 1; padding: 20px 24px; min-width: 0; }
+  .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+  .page-title { margin: 0; font-size: 20px; font-weight: 600; color: #111827; }
+  .page-desc { margin: 6px 0 0; font-size: 12px; color: #8a94a6; }
+  .meta-pill { padding: 4px 12px; border-radius: 20px; background: #eef2ff; color: #4d7cfe; font-size: 12px; font-weight: 500; }
+  .card { border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.05); margin-bottom: 16px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #f0f2f7; }
+  .card-title { font-size: 14px; font-weight: 500; }
+  .card-sub { margin-left: 8px; font-size: 12px; color: #9aa3b5; font-weight: 400; }
+  .filter { display: flex; gap: 12px; align-items: center; padding: 16px 20px; }
+  .field { height: 32px; border: 1px solid #dcdfe6; border-radius: 4px; padding: 0 10px; font-size: 13px; color: #606266; display: flex; align-items: center; min-width: 170px; background: #fff; }
+  .field.label { min-width: auto; border: none; color: #6b7280; padding-left: 0; }
+  .btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 13px; border-radius: 4px; font-size: 12px; border: 1px solid #dcdfe6; background: #fff; color: #4b5568; cursor: pointer; }
+  .btn-primary { background: #e1251b; border-color: #e1251b; color: #fff; }
+  .btn-link { border: none; background: none; color: #e1251b; padding: 2px 6px; font-size: 12px; cursor: pointer; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #fafbfc; color: #5a6478; font-weight: 500; font-size: 12px; padding: 10px 12px; text-align: left; border-bottom: 1px solid #ebeef5; white-space: nowrap; }
+  td { padding: 11px 12px; border-bottom: 1px solid #f2f4f8; color: #374151; font-size: 13px; }
+  tr:hover td { background: #fafbfc; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 12px; font-weight: 500; }
+  .pill-ok { background: #f0f9eb; color: #4e8c3f; }
+  .pill-zero { background: #f4f5f8; color: #8a94a6; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 12px; line-height: 18px; }
+  .tag-danger { background: #fef0f0; color: #c45656; }
+  .tag-warn { background: #fdf6ec; color: #b88230; }
+  .muted { color: #9aa3b5; }
+  .banner { display: flex; align-items: center; gap: 10px; padding: 11px 18px; border-radius: 10px; background: #f5f9ff; border: 1px solid #d6e4fb; color: #3f6395; font-size: 12px; margin-bottom: 16px; }
+  .banner b { color: #23456f; }
+  .readonly-note { font-size: 12px; color: #8a94a6; padding: 12px 20px; background: #fafbfc; border-top: 1px solid #f0f2f7; border-radius: 0 0 12px 12px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="sider">
+    <div class="logo">WMS 仓储管理</div>
+    <div class="menu-group">
+      <div class="menu-title">基础资料</div>
+      <div class="menu-item">仓库 / 库区 / 库位</div>
+      <div class="menu-item">SKU / 货主</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">入库作业</div>
+      <div class="menu-item">入库单</div>
+      <div class="menu-item">收货记录</div>
+      <div class="menu-item">上架任务</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">出库作业</div>
+      <div class="menu-item">出库单</div>
+      <div class="menu-item">拣货任务</div>
+      <div class="menu-item">发运记录</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">库存管理</div>
+      <div class="menu-item active">实时库存</div>
+      <div class="menu-item">库存流水</div>
+      <div class="menu-item">盘点单</div>
+      <div class="menu-item">调拨单</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-head">
+      <div>
+        <h2 class="page-title">实时库存</h2>
+        <p class="page-desc">只读视图：数量由收货、上架、分配、拣货、发运、盘点自动维护，不提供手工编辑</p>
+      </div>
+      <div class="meta-pill">3 条记录</div>
+    </div>
+
+    <div class="banner">
+      <span>库存恒等式：<b>在库数量 = 已分配 + 锁定 + 可用数量</b>。可用数量的变化只有两个来源——出库单分配（增加已分配）与盘点/质检冻结（增加锁定）。</span>
+    </div>
+
+    <div class="card">
+      <div class="filter">
+        <span class="field label">仓库</span><div class="field">演示仓</div>
+        <span class="field label">SKU</span><div class="field">请输入编码或名称</div>
+        <span class="field label">库位</span><div class="field">全部库位</div>
+        <button class="btn btn-primary">查询</button>
+        <button class="btn">重置</button>
+        <div style="flex:1"></div>
+        <button class="btn">导出</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">库存列表<span class="card-sub">共 3 条</span></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>仓库</th><th>库位</th><th>SKU</th><th>批次</th><th>到期日</th>
+            <th class="num">在库</th><th class="num">已分配</th><th class="num">锁定</th>
+            <th class="num">可用</th><th>状态</th><th style="width:100px">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>演示仓</td><td>A-01-01</td><td>SKU-1001 纯棉T恤 白色 L</td>
+            <td>B20261201</td>
+            <td><span class="tag tag-danger">2026-12-01 · 24 天</span></td>
+            <td class="num">6.000</td><td class="num muted">0.000</td><td class="num muted">0.000</td>
+            <td class="num"><span class="pill pill-ok">6.000</span></td>
+            <td>正常</td>
+            <td><button class="btn-link">流水</button></td>
+          </tr>
+          <tr>
+            <td>演示仓</td><td>A-01-01</td><td>SKU-1001 纯棉T恤 白色 L</td>
+            <td>B20270601</td>
+            <td><span class="tag tag-warn">2027-06-01 · 206 天</span></td>
+            <td class="num">4.000</td><td class="num muted">0.000</td><td class="num muted">0.000</td>
+            <td class="num"><span class="pill pill-ok">4.000</span></td>
+            <td>正常</td>
+            <td><button class="btn-link">流水</button></td>
+          </tr>
+          <tr>
+            <td>演示仓</td><td>A-01-02</td><td>SKU-1002 帆布购物袋</td>
+            <td class="muted">不管理批次</td>
+            <td class="muted">—</td>
+            <td class="num">50.000</td><td class="num muted">0.000</td><td class="num muted">0.000</td>
+            <td class="num"><span class="pill pill-ok">50.000</span></td>
+            <td>正常</td>
+            <td><button class="btn-link">流水</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="readonly-note">
+        本页已移除「新增」「编辑」「删除」：库存记录只能由业务动作产生。需要调整数量请走盘点单（差异调整）或调拨单。<br>
+        到期日列按剩余天数着色：≤30 天标红（提示优先出库），≤180 天标黄，其余不着色。
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

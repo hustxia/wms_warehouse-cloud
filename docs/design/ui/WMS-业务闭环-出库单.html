@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>出库单 · WMS V1.0 效果图</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fb; color: #1f2937; font-size: 13px; }
+  .layout { display: flex; min-height: 100vh; }
+  .sider { width: 232px; background: #fff; border-right: 1px solid #e2e7f0; flex: 0 0 232px; }
+  .logo { height: 56px; background: linear-gradient(135deg, #e1251b 0%, #ff6a3d 100%); color: #fff; display: flex; align-items: center; padding: 0 18px; font-weight: 600; font-size: 15px; }
+  .menu-group { padding: 12px 0 6px; }
+  .menu-title { padding: 0 18px 6px; font-size: 11px; color: #a5aec4; }
+  .menu-item { padding: 9px 18px; color: #4b5568; font-size: 13px; }
+  .menu-item.active { background: #fdecea; color: #e1251b; font-weight: 500; box-shadow: inset -3px 0 0 #e1251b; }
+  .main { flex: 1; padding: 20px 24px; min-width: 0; }
+  .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+  .page-title { margin: 0; font-size: 20px; font-weight: 600; color: #111827; }
+  .page-desc { margin: 6px 0 0; font-size: 12px; color: #8a94a6; }
+  .meta-pill { padding: 4px 12px; border-radius: 20px; background: #eef2ff; color: #4d7cfe; font-size: 12px; font-weight: 500; }
+  .card { border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.05); margin-bottom: 16px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #f0f2f7; }
+  .card-title { font-size: 14px; font-weight: 500; }
+  .card-sub { margin-left: 8px; font-size: 12px; color: #9aa3b5; font-weight: 400; }
+  .steps { display: flex; align-items: center; padding: 16px 20px; gap: 6px; }
+  .step { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #9aa3b5; }
+  .step .dot { width: 20px; height: 20px; border-radius: 50%; background: #e8ecf3; color: #9aa3b5; display: flex; align-items: center; justify-content: center; font-size: 11px; flex: 0 0 20px; }
+  .step.done, .step.active { color: #1f2937; }
+  .step.done .dot, .step.active .dot { background: #e1251b; color: #fff; }
+  .step.active .dot { box-shadow: 0 0 0 4px rgba(225,37,27,.12); }
+  .step-line { flex: 0 0 24px; height: 1px; background: #e8ecf3; }
+  .filter { display: flex; gap: 12px; align-items: center; padding: 16px 20px; }
+  .field { height: 32px; border: 1px solid #dcdfe6; border-radius: 4px; padding: 0 10px; font-size: 13px; color: #606266; display: flex; align-items: center; min-width: 180px; background: #fff; }
+  .field.label { min-width: auto; border: none; color: #6b7280; padding-left: 0; }
+  .btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 13px; border-radius: 4px; font-size: 12px; border: 1px solid #dcdfe6; background: #fff; color: #4b5568; cursor: pointer; }
+  .btn-primary { background: #e1251b; border-color: #e1251b; color: #fff; }
+  .btn-link { border: none; background: none; color: #e1251b; padding: 2px 6px; font-size: 12px; cursor: pointer; }
+  .btn-link.mute { color: #8a94a6; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #fafbfc; color: #5a6478; font-weight: 500; font-size: 12px; padding: 10px 12px; text-align: left; border-bottom: 1px solid #ebeef5; white-space: nowrap; }
+  td { padding: 11px 12px; border-bottom: 1px solid #f2f4f8; color: #374151; font-size: 13px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 12px; line-height: 18px; }
+  .tag-info { background: #eef2f7; color: #5a6478; }
+  .tag-warn { background: #fdf6ec; color: #b88230; }
+  .tag-success { background: #f0f9eb; color: #5a9e4a; }
+  .mask { position: fixed; inset: 0; background: rgba(17,24,39,.45); display: flex; align-items: flex-start; justify-content: center; padding-top: 50px; }
+  .dialog { width: 820px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 12px 32px rgba(16,24,40,.2); }
+  .dialog-head { padding: 16px 20px; font-size: 15px; font-weight: 500; border-bottom: 1px solid #f0f2f7; display: flex; justify-content: space-between; }
+  .dialog-body { padding: 18px 20px; max-height: 70vh; overflow: auto; }
+  .dialog-foot { padding: 12px 20px; border-top: 1px solid #f0f2f7; display: flex; justify-content: flex-end; gap: 8px; background: #fafbfc; }
+  .hint { font-size: 12px; color: #8a94a6; background: #f7f9fc; border-left: 3px solid #d7dfec; padding: 8px 12px; border-radius: 0 4px 4px 0; margin-bottom: 14px; line-height: 1.7; }
+  .hint b { color: #1f2937; }
+  .sub-table { margin-top: 8px; background: #fafbfc; border-radius: 6px; }
+  .sub-table th { background: transparent; font-size: 11px; color: #8a94a6; }
+  .sub-table td { background: transparent; font-size: 12px; padding: 8px 12px; }
+  .badge-fefo { display: inline-block; padding: 2px 8px; border-radius: 10px; background: #fdecea; color: #e1251b; font-size: 11px; font-weight: 500; }
+  .close { color: #9aa3b5; font-weight: 400; cursor: pointer; }
+  .summary { display: flex; gap: 28px; padding: 12px 0 4px; font-size: 12px; color: #6b7280; }
+  .summary b { color: #1f2937; font-size: 15px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="sider">
+    <div class="logo">WMS 仓储管理</div>
+    <div class="menu-group">
+      <div class="menu-title">基础资料</div>
+      <div class="menu-item">仓库 / 库区 / 库位</div>
+      <div class="menu-item">SKU / 货主</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">入库作业</div>
+      <div class="menu-item">入库单</div>
+      <div class="menu-item">收货记录</div>
+      <div class="menu-item">上架任务</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">出库作业</div>
+      <div class="menu-item active">出库单</div>
+      <div class="menu-item">拣货任务</div>
+      <div class="menu-item">发运记录</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">库存管理</div>
+      <div class="menu-item">实时库存</div>
+      <div class="menu-item">库存流水</div>
+      <div class="menu-item">盘点单</div>
+      <div class="menu-item">调拨单</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-head">
+      <div>
+        <h2 class="page-title">出库单</h2>
+        <p class="page-desc">分配库存（按效期先出）、拣货确认、发运出库，每一步自动更新库存与流水</p>
+      </div>
+      <div class="meta-pill">2 条记录</div>
+    </div>
+
+    <div class="card">
+      <div class="steps">
+        <div class="step active"><span class="dot">1</span>创建</div><div class="step-line"></div>
+        <div class="step"><span class="dot">2</span>已分配</div><div class="step-line"></div>
+        <div class="step"><span class="dot">3</span>拣货中</div><div class="step-line"></div>
+        <div class="step"><span class="dot">4</span>已拣货</div><div class="step-line"></div>
+        <div class="step"><span class="dot">5</span>已发运</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="filter">
+        <span class="field label">出库单号</span><div class="field">请输入单号</div>
+        <span class="field label">状态</span><div class="field">全部状态</div>
+        <button class="btn btn-primary">查询</button>
+        <button class="btn">重置</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">出库单列表<span class="card-sub">共 2 条</span></div>
+        <div><button class="btn btn-primary">＋ 新建出库单</button></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:38px"><input type="checkbox"></th>
+            <th>出库单号</th><th>类型</th><th>仓库</th><th>货主</th><th>状态</th>
+            <th class="num">订单数量</th><th class="num">已分配</th><th class="num">已拣</th><th class="num">已发运</th>
+            <th style="width:200px">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><b>OB-DEMO-0001</b></td><td>销售出库</td><td>演示仓</td><td>演示货主</td>
+            <td><span class="tag tag-info">待分配</span></td>
+            <td class="num">8.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td>
+              <button class="btn-link">详情</button>
+              <button class="btn-link">分配</button>
+              <button class="btn-link mute">拣货</button>
+              <button class="btn-link mute">发运</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>OB-20261106-003</td><td>销售出库</td><td>中心仓</td><td>优选贸易</td>
+            <td><span class="tag tag-warn">已分配</span></td>
+            <td class="num">50.000</td>
+            <td class="num">50.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td>
+              <button class="btn-link">详情</button>
+              <button class="btn-link mute">分配</button>
+              <button class="btn-link">拣货</button>
+              <button class="btn-link mute">发运</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="mask">
+  <div class="dialog">
+    <div class="dialog-head">
+      <span>分配结果 · OB-DEMO-0001</span>
+      <span class="close">✕</span>
+    </div>
+    <div class="dialog-body">
+      <div class="hint">
+        <span class="badge-fefo">FEFO 效期先出</span>
+        &nbsp;按 <b>到期日期升序</b> → 批次号升序 → 库位号升序 依次占用，只选可用量足够（在库 − 已分配 − 锁定）的库存记录。
+        分配只增加「已分配」，<b>不动在库数量</b>；拣货后才实际扣减。
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44px">行号</th><th>SKU</th><th class="num">需求</th><th class="num">已分配</th>
+            <th>分配结果</th><th class="num">缺量</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>SKU-1001 纯棉T恤 白色 L</td>
+            <td class="num">8.000</td>
+            <td class="num"><b style="color:#5a9e4a">8.000</b></td>
+            <td>
+              <table class="sub-table">
+                <thead><tr><th>批次</th><th>到期日</th><th>库位</th><th class="num">分配</th></tr></thead>
+                <tbody>
+                  <tr><td>B20261201</td><td>2026-12-01</td><td>A-01-01</td><td class="num">6.000</td></tr>
+                  <tr><td>B20270601</td><td>2027-06-01</td><td>A-01-01</td><td class="num">2.000</td></tr>
+                </tbody>
+              </table>
+            </td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="summary">
+        <span>需求合计 <b>8.000</b></span>
+        <span>分配合计 <b style="color:#5a9e4a">8.000</b></span>
+        <span>命中库存记录 <b>2</b> 条</span>
+        <span>单据状态 <b>已分配</b></span>
+      </div>
+      <div class="hint" style="margin-top:14px;border-left-color:#f0c78a;background:#fdf9f2">
+        库存不足时不会报错：能分多少分多少，明细状态转「部分分配」，差额显示在「缺量」列，单据状态同步为「部分分配」。此处示例库存充足，缺量为 0。
+      </div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn">关闭</button>
+      <button class="btn">取消分配</button>
+      <button class="btn btn-primary">确认分配</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

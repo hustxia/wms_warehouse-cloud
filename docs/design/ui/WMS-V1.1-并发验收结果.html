@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>WMS V1.1 并发验收结果 - 效果图</title>
+<style>
+  :root { --primary:#409eff; --border:#e4e7ed; --text:#303133; --text-2:#909399; --bg:#f5f7fa; --ok:#67c23a; --bad:#f56c6c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.6 -apple-system,"Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); }
+  .layout { display:flex; min-height:100vh; }
+  .side { width:200px; background:#304156; color:#bfcbd9; padding-top:12px; flex:none; }
+  .side .logo { padding:14px 20px 18px; color:#fff; font-size:15px; border-bottom:1px solid #3b4a5e; }
+  .side a { display:block; padding:9px 20px; color:#bfcbd9; text-decoration:none; font-size:13px; }
+  .side a.active { background:#263445; color:#fff; }
+  .main { flex:1; padding:20px 24px 40px; }
+  h1 { font-size:19px; margin:0 0 6px; }
+  .sub { color:var(--text-2); font-size:13px; margin-bottom:16px; }
+  .steps { display:flex; gap:0; background:#fff; border:1px solid var(--border); border-radius:4px; padding:14px 10px; margin-bottom:18px; }
+  .step { flex:1; text-align:center; font-size:12px; color:var(--text-2); border-right:1px solid var(--border); }
+  .step:last-child { border-right:0; }
+  .step b { display:block; width:22px; height:22px; line-height:22px; border-radius:50%; background:#ecf5ff; color:var(--primary); margin:0 auto 6px; font-weight:500; }
+  .step.cur b { background:var(--primary); color:#fff; }
+  .step.cur { color:var(--primary); }
+  .card { background:#fff; border:1px solid var(--border); border-radius:4px; padding:18px; margin-bottom:18px; }
+  .card h2 { font-size:15px; margin:0 0 4px; }
+  .card .desc { color:var(--text-2); font-size:12px; margin-bottom:14px; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:6px; }
+  .kpi { border:1px solid var(--border); border-radius:4px; padding:14px; text-align:center; }
+  .kpi .num { font-size:26px; line-height:1.2; color:var(--primary); }
+  .kpi .num.good { color:var(--ok); }
+  .kpi .lbl { font-size:12px; color:var(--text-2); margin-top:4px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { border-bottom:1px solid var(--border); padding:9px 10px; text-align:left; }
+  th { background:#fafafa; font-weight:500; }
+  .tag { display:inline-block; padding:0 7px; border-radius:3px; font-size:12px; line-height:20px; }
+  .tag.on { background:#f0f9eb; color:var(--ok); }
+  .tag.off { background:#fef0f0; color:var(--bad); }
+  pre { background:#263445; color:#d9e2ec; padding:14px 16px; border-radius:4px; font:12px/1.8 Consolas,monospace; overflow-x:auto; margin:0; }
+  pre .g { color:#9ede73; }
+  pre .y { color:#f5c775; }
+  .panel { border:1px dashed var(--primary); background:#ecf5ff; padding:12px 14px; border-radius:4px; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="side">
+    <div class="logo">WMS 仓储管理</div>
+    <a href="#">仪表盘</a><a href="#">入库作业</a><a href="#">出库作业</a>
+    <a href="#" class="active">库存管理</a><a href="#">盘点作业</a><a href="#">基础资料</a>
+  </nav>
+  <main class="main">
+    <h1>V1.1 并发验收结果 · 效果图</h1>
+    <div class="sub">挂载位置：库存页 BizInventoryPanel「库存恒等式」提示下方；数据来自 scripts/e2e-cloud.mjs 并发 step</div>
+
+    <div class="steps">
+      <div class="step"><b>1</b>网关 / 鉴权</div>
+      <div class="step"><b>2</b>入库闭环</div>
+      <div class="step"><b>3</b>出库闭环</div>
+      <div class="step"><b>4</b>盘点闭环</div>
+      <div class="step cur"><b>5</b>并发验收</div>
+      <div class="step"><b>6</b>流水恒等式</div>
+    </div>
+
+    <section class="card">
+      <h2>最近一次并发验收</h2>
+      <div class="desc">临时库存记录 id=91001 / 批次 CONCURRENT-TEST / 初始在库 100.000，跑完由 reset() 删除</div>
+      <div class="kpis">
+        <div class="kpi"><div class="num good">100</div><div class="lbl">成功扣减次数</div></div>
+        <div class="kpi"><div class="num">50</div><div class="lbl">超额并发被拒</div></div>
+        <div class="kpi"><div class="num good">100</div><div class="lbl">新增流水条数</div></div>
+        <div class="kpi"><div class="num good">0</div><div class="lbl">负数 / 死锁异常</div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>断言明细</h2>
+      <table>
+        <thead><tr><th>场景</th><th>并发数</th><th>初始 on_hand</th><th>成功</th><th>拒绝</th><th>终态 on_hand</th><th>流水</th><th>结果</th></tr></thead>
+        <tbody>
+          <tr><td>刚好扣完</td><td>100</td><td>100.000</td><td>100</td><td>0</td><td>0.000</td><td>100</td><td><span class="tag on">PASS</span></td></tr>
+          <tr><td>超额并发</td><td>150</td><td>100.000</td><td>100</td><td>50（库存不足）</td><td>0.000</td><td>100</td><td><span class="tag on">PASS</span></td></tr>
+          <tr><td>流水自洽</td><td>—</td><td>—</td><td colspan="3">每条 qty_after - qty_before = qty_change = -1.000</td><td>100</td><td><span class="tag on">PASS</span></td></tr>
+          <tr><td>恒等式</td><td>—</td><td>—</td><td colspan="3">on_hand = Σ qty_change，差异 0</td><td>—</td><td><span class="tag on">PASS</span></td></tr>
+        </tbody>
+      </table>
+      <div class="desc" style="margin-top:12px">口径澄清：V1.0 验收原文「50 线程各扣 1 件（初始 100）→ 成功恰好 100 次」自相矛盾，本版改为 100 个并发请求各扣 1 件，并另加 150 并发拒绝场景。</div>
+    </section>
+
+    <section class="card">
+      <h2>终端输出（e2e 并发段）</h2>
+      <pre><span class="g">$ node scripts/e2e-cloud.mjs</span>
+PASS 网关路由 + 401 鉴权 + /internal 不路由                    ( 210ms)
+PASS 入库：收货 → 幂等回放 → 越级上架拦截 → 上架新增库存流水   ( 480ms)
+PASS 出库：FEFO → 取消分配 → 重新分配 → 拣货 → 发运           ( 620ms)
+PASS 盘点：快照 → 冻结 → 实盘 → 确认调整                     ( 390ms)
+<span class="y">PASS 并发：100 并发扣减 → 成功 100 / on_hand 0 / 流水 100      ( 910ms)
+PASS 并发：150 并发扣减 → 成功 100 / 拒绝 50 / 无负数无死锁    (1240ms)</span>
+PASS 全局一致性：流水恒等式 + 生成列恒等式 + 单据终态          ( 160ms)
+
+结果：132/132 断言通过
+现场已恢复（如需保留：node scripts/e2e-cloud.mjs --keep）</pre>
+    </section>
+
+    <section class="card">
+      <h2>页面上的呈现位置</h2>
+      <div class="panel">
+        <b>库存恒等式</b>　在库量 = 该库存记录所有流水 qty_change 之和<br>
+        <b>并发验收</b>　最近一次：100 成功 / 50 拒绝 / 100 条流水 / 0 异常　<span class="tag on">已通过</span>　<a href="#">查看 e2e 报告</a>
+      </div>
+      <div class="desc" style="margin-top:10px">页面只展示脚本产出的事实，不自行推导；脚本未跑过时显示「暂无验收记录」。</div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

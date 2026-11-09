@@ -1,0 +1,35 @@
+package com.wms_warehouse.vo;
+
+import lombok.Data;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
+
+/**
+ * 移库单表 VO
+ */
+@Data
+public class WmsTransferOrderVO implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    // <gen:begin key="vo-fields">
+    private Long id;
+    private String transferNo;
+    private Long warehouseId;
+    private Long fromLocation;
+    private Long toLocation;
+    private Long skuId;
+    private String batchNo;
+    private BigDecimal transferQty;
+    private String status;
+    private Long operatorId;
+    private LocalDateTime createdAt;
+    private LocalDateTime finishedAt;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
+    // <gen:end key="vo-fields">
+    // ===== 以下为手写区：写在 gen:end 之后的内容，重新生成不会被覆盖 =====
+}

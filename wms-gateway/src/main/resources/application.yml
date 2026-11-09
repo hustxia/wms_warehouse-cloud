@@ -1,0 +1,50 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: wms-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+    gateway:
+      routes:
+        # 健康检查：前端首页「后端连通检测」打 /dev-api/health（代理剥前缀后是 /health）
+        # 之前没配这条路由，请求直接 404 → 前端弹「请求失败」。必须显式路由到 wms-system。
+        - id: wms-system-health
+          uri: lb://wms-system
+          predicates: [ "Path=/health" ]
+        # 系统服务：登录/验证码/字典/操作日志/登录日志/内置流程
+        - id: wms-system-auth
+          uri: lb://wms-system
+          predicates: [ "Path=/auth/**" ]
+        - id: wms-system-dict
+          uri: lb://wms-system
+          predicates: [ "Path=/system/**" ]
+        - id: wms-system-flow
+          uri: lb://wms-system
+          predicates: [ "Path=/flow/**" ]
+        - id: wms-system-logs
+          uri: lb://wms-system
+          predicates: [ "Path=/loginLog/**,/operLog/**" ]
+        # 基础资料
+        - id: wms-master
+          uri: lb://wms-master
+          predicates: [ "Path=/wms_warehouse/**,/wms_zone/**,/wms_location/**,/wms_owner/**,/wms_sku/**" ]
+        # 入库
+        - id: wms-inbound
+          uri: lb://wms-inbound
+          predicates: [ "Path=/wms_inbound_order/**,/wms_inbound_order_item/**,/wms_receipt_record/**,/wms_putaway_task/**" ]
+        # 出库
+        - id: wms-outbound
+          uri: lb://wms-outbound
+          predicates: [ "Path=/wms_outbound_order/**,/wms_outbound_order_item/**,/wms_pick_task/**,/wms_wave/**,/wms_shipment/**" ]
+        # 库存
+        - id: wms-inventory
+          uri: lb://wms-inventory
+          predicates: [ "Path=/wms_inventory/**,/wms_inventory_lock/**,/wms_inventory_txn/**,/wms_allocation/**,/wms_stocktake_order/**,/wms_stocktake_item/**,/wms_transfer_order/**" ]
+
+logging:
+  level:
+    com.wms_warehouse: info

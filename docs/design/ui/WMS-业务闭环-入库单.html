@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>入库单 · WMS V1.0 效果图</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fb; color: #1f2937; font-size: 13px; }
+  .layout { display: flex; min-height: 100vh; }
+  .sider { width: 232px; background: #fff; border-right: 1px solid #e2e7f0; flex: 0 0 232px; }
+  .logo { height: 56px; background: linear-gradient(135deg, #e1251b 0%, #ff6a3d 100%); color: #fff; display: flex; align-items: center; padding: 0 18px; font-weight: 600; font-size: 15px; letter-spacing: .3px; }
+  .menu-group { padding: 12px 0 6px; }
+  .menu-title { padding: 0 18px 6px; font-size: 11px; color: #a5aec4; }
+  .menu-item { padding: 9px 18px; color: #4b5568; font-size: 13px; }
+  .menu-item.active { background: #fdecea; color: #e1251b; font-weight: 500; box-shadow: inset -3px 0 0 #e1251b; }
+  .main { flex: 1; padding: 20px 24px; min-width: 0; }
+  .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+  .page-title { margin: 0; font-size: 20px; font-weight: 600; color: #111827; }
+  .page-desc { margin: 6px 0 0; font-size: 12px; color: #8a94a6; }
+  .meta-pill { padding: 4px 12px; border-radius: 20px; background: #eef2ff; color: #4d7cfe; font-size: 12px; font-weight: 500; }
+  .card { border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.05); margin-bottom: 16px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #f0f2f7; }
+  .card-title { font-size: 14px; font-weight: 500; }
+  .card-sub { margin-left: 8px; font-size: 12px; color: #9aa3b5; font-weight: 400; }
+  .card-body { padding: 16px 20px; }
+  .steps { display: flex; align-items: center; padding: 16px 20px; gap: 6px; }
+  .step { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #9aa3b5; }
+  .step .dot { width: 20px; height: 20px; border-radius: 50%; background: #e8ecf3; color: #9aa3b5; display: flex; align-items: center; justify-content: center; font-size: 11px; flex: 0 0 20px; }
+  .step.done, .step.active { color: #1f2937; }
+  .step.done .dot, .step.active .dot { background: #e1251b; color: #fff; }
+  .step.active .dot { box-shadow: 0 0 0 4px rgba(225,37,27,.12); }
+  .step-line { flex: 0 0 24px; height: 1px; background: #e8ecf3; }
+  .step.done + .step-line { background: #f6b3ac; }
+  .filter { display: flex; gap: 12px; align-items: center; padding: 16px 20px; }
+  .field { height: 32px; border: 1px solid #dcdfe6; border-radius: 4px; padding: 0 10px; font-size: 13px; color: #606266; display: flex; align-items: center; min-width: 180px; background: #fff; }
+  .field.label { min-width: auto; border: none; color: #6b7280; padding-left: 0; }
+  .btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 13px; border-radius: 4px; font-size: 12px; border: 1px solid #dcdfe6; background: #fff; color: #4b5568; cursor: pointer; }
+  .btn-primary { background: #e1251b; border-color: #e1251b; color: #fff; }
+  .btn-warn { background: #fff; border-color: #f0c78a; color: #c07c1a; }
+  .btn-disabled { opacity: .45; cursor: not-allowed; }
+  .btn-link { border: none; background: none; color: #e1251b; padding: 2px 6px; font-size: 12px; cursor: pointer; }
+  .btn-link.mute { color: #8a94a6; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #fafbfc; color: #5a6478; font-weight: 500; font-size: 12px; padding: 10px 12px; text-align: left; border-bottom: 1px solid #ebeef5; white-space: nowrap; }
+  td { padding: 11px 12px; border-bottom: 1px solid #f2f4f8; color: #374151; font-size: 13px; }
+  tr:hover td { background: #fafbfc; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 12px; line-height: 18px; }
+  .tag-info { background: #eef2f7; color: #5a6478; }
+  .tag-warn { background: #fdf6ec; color: #b88230; }
+  .tag-success { background: #f0f9eb; color: #5a9e4a; }
+  .tag-primary { background: #fdecea; color: #e1251b; }
+  .mask { position: fixed; inset: 0; background: rgba(17,24,39,.45); display: flex; align-items: flex-start; justify-content: center; padding-top: 60px; }
+  .dialog { width: 760px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 12px 32px rgba(16,24,40,.2); }
+  .dialog-head { padding: 16px 20px; font-size: 15px; font-weight: 500; border-bottom: 1px solid #f0f2f7; display: flex; justify-content: space-between; }
+  .dialog-body { padding: 18px 20px; }
+  .dialog-foot { padding: 12px 20px; border-top: 1px solid #f0f2f7; display: flex; justify-content: flex-end; gap: 8px; background: #fafbfc; }
+  .hint { font-size: 12px; color: #8a94a6; background: #f7f9fc; border-left: 3px solid #d7dfec; padding: 8px 12px; border-radius: 0 4px 4px 0; margin-bottom: 14px; }
+  input.qty { width: 90px; height: 30px; border: 1px solid #dcdfe6; border-radius: 4px; padding: 0 8px; font-size: 13px; text-align: right; }
+  .req { color: #e1251b; }
+  .close { color: #9aa3b5; font-weight: 400; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="sider">
+    <div class="logo">WMS 仓储管理</div>
+    <div class="menu-group">
+      <div class="menu-title">基础资料</div>
+      <div class="menu-item">仓库 / 库区 / 库位</div>
+      <div class="menu-item">SKU / 货主</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">入库作业</div>
+      <div class="menu-item active">入库单</div>
+      <div class="menu-item">收货记录</div>
+      <div class="menu-item">上架任务</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">出库作业</div>
+      <div class="menu-item">出库单</div>
+      <div class="menu-item">拣货任务</div>
+      <div class="menu-item">发运记录</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">库存管理</div>
+      <div class="menu-item">实时库存</div>
+      <div class="menu-item">库存流水</div>
+      <div class="menu-item">盘点单</div>
+      <div class="menu-item">调拨单</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-head">
+      <div>
+        <h2 class="page-title">入库单</h2>
+        <p class="page-desc">登记到货实收数量并上架到库位，库存与流水由系统自动生成</p>
+      </div>
+      <div class="meta-pill">2 条记录</div>
+    </div>
+
+    <div class="card">
+      <div class="steps">
+        <div class="step active"><span class="dot">1</span>创建</div><div class="step-line"></div>
+        <div class="step"><span class="dot">2</span>运输中</div><div class="step-line"></div>
+        <div class="step"><span class="dot">3</span>收货中</div><div class="step-line"></div>
+        <div class="step"><span class="dot">4</span>已收货</div><div class="step-line"></div>
+        <div class="step"><span class="dot">5</span>已上架</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="filter">
+        <span class="field label">入库单号</span><div class="field">请输入单号</div>
+        <span class="field label">状态</span><div class="field">全部状态</div>
+        <button class="btn btn-primary">查询</button>
+        <button class="btn">重置</button>
+        <div style="flex:1"></div>
+        <button class="btn">导出</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">入库单列表<span class="card-sub">共 2 条</span></div>
+        <div>
+          <button class="btn btn-primary">＋ 新建入库单</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:38px"><input type="checkbox"></th>
+            <th>入库单号</th><th>类型</th><th>仓库</th><th>货主</th>
+            <th>状态</th><th class="num">预期</th><th class="num">实收</th><th class="num">已上架</th>
+            <th>创建时间</th><th style="width:220px">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><b>IB-DEMO-0001</b></td>
+            <td>采购入库</td><td>演示仓</td><td>演示货主</td>
+            <td><span class="tag tag-info">待收货</span></td>
+            <td class="num">60.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td>2026-11-07 17:40</td>
+            <td>
+              <button class="btn-link">详情</button>
+              <button class="btn-link">收货</button>
+              <button class="btn-link mute">上架</button>
+              <button class="btn-link mute">编辑</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>IB-20261105-002</td>
+            <td>采购入库</td><td>中心仓</td><td>优选贸易</td>
+            <td><span class="tag tag-warn">收货中</span></td>
+            <td class="num">120.000</td>
+            <td class="num">80.000</td>
+            <td class="num" style="color:#9aa3b5">0.000</td>
+            <td>2026-11-05 09:12</td>
+            <td>
+              <button class="btn-link">详情</button>
+              <button class="btn-link">收货</button>
+              <button class="btn-link mute">上架</button>
+              <button class="btn-link mute">编辑</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="mask">
+  <div class="dialog">
+    <div class="dialog-head">
+      <span>收货登记 · IB-DEMO-0001</span>
+      <span class="close">✕</span>
+    </div>
+    <div class="dialog-body">
+      <div class="hint">支持分批收货。本次收货数量累加到「实收数量」，累计不得超过预期数量；批次与效期按行带出，可在上架时调整库位。</div>
+      <table>
+        <thead>
+          <tr><th style="width:48px">行号</th><th>SKU</th><th>批次号</th><th class="num">预期</th><th class="num">已收</th><th class="num" style="width:130px">本次收货 <span class="req">*</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>SKU-1001 纯棉T恤 白色 L</td><td>B20280101</td><td class="num">20.000</td><td class="num">0.000</td><td class="num"><input class="qty" value="20.000"></td></tr>
+          <tr><td>2</td><td>SKU-1001 纯棉T恤 白色 L</td><td>B20280201</td><td class="num">10.000</td><td class="num">0.000</td><td class="num"><input class="qty" value="6.000"></td></tr>
+          <tr><td>3</td><td>SKU-1002 帆布购物袋</td><td><span style="color:#9aa3b5">不管理批次</span></td><td class="num">30.000</td><td class="num">0.000</td><td class="num"><input class="qty" value="0.000"></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;font-size:12px;color:#8a94a6">本次收货合计 <b style="color:#1f2937">26.000</b>，提交后单据状态将变为「收货中」，第 1 行「已完成」、第 2、3 行「部分收货」或「待收货」。</div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn">取消</button>
+      <button class="btn btn-primary">确认收货</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

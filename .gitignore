@@ -1,0 +1,30 @@
+# 依赖与构建产物
+target/
+build/
+out/
+dist/
+logs/
+*.log
+derby.log
+*.jar
+*.war
+*.class
+
+# 本机私有配置、备份与诊断产物
+application-local.yml
+.backup/
+.gen-artifacts/
+.gen-backup/
+.gen-verify/
+.git.stale-flat-*/
+diag/
+diag-menu.js
+
+# 编辑器与系统文件
+.idea/
+.vscode/
+*.iml
+*.suo
+*.sw?
+.DS_Store
+Thumbs.db

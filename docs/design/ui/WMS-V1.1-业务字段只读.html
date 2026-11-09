@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>WMS V1.1 业务字段只读 - 效果图</title>
+<style>
+  :root { --primary:#409eff; --border:#e4e7ed; --text:#303133; --text-2:#909399; --bg:#f5f7fa; --locked:#f5f7fa; --ok:#67c23a; --warn:#e6a23c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.6 -apple-system,"Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); }
+  .layout { display:flex; min-height:100vh; }
+  .side { width:200px; background:#304156; color:#bfcbd9; padding-top:12px; flex:none; }
+  .side .logo { padding:14px 20px 18px; color:#fff; font-size:15px; border-bottom:1px solid #3b4a5e; }
+  .side a { display:block; padding:9px 20px; color:#bfcbd9; text-decoration:none; font-size:13px; }
+  .side a.active { background:#263445; color:#fff; }
+  .main { flex:1; padding:20px 24px 40px; }
+  h1 { font-size:19px; margin:0 0 6px; }
+  .sub { color:var(--text-2); font-size:13px; margin-bottom:16px; }
+  .hint { background:#ecf5ff; border:1px solid #d9ecff; color:#409eff; padding:10px 14px; border-radius:4px; margin-bottom:18px; font-size:13px; }
+  .anchors a { display:inline-block; margin:0 8px 12px 0; padding:5px 12px; background:#fff; border:1px solid var(--border); border-radius:4px; color:var(--text); text-decoration:none; font-size:13px; }
+  .card { background:#fff; border:1px solid var(--border); border-radius:4px; padding:18px; margin-bottom:18px; }
+  .card h2 { font-size:15px; margin:0 0 4px; }
+  .card .desc { color:var(--text-2); font-size:12px; margin-bottom:14px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px 18px; }
+  .item label { display:block; font-size:12px; color:var(--text-2); margin-bottom:4px; }
+  .ctrl { width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:4px; background:#fff; color:var(--text); font-size:13px; min-height:34px; }
+  .ctrl.locked { background:var(--locked); color:var(--text-2); border-style:dashed; }
+  .locknote { display:block; color:var(--warn); font-size:11px; margin-top:3px; }
+  .legend { font-size:12px; color:var(--text-2); margin-top:12px; }
+  .tag { display:inline-block; padding:0 7px; border-radius:3px; font-size:12px; line-height:20px; }
+  .tag.on { background:#f0f9eb; color:#67c23a; }
+  .tag.off { background:#fef0f0; color:#f56c6c; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { border-bottom:1px solid var(--border); padding:9px 10px; text-align:left; }
+  th { background:#fafafa; font-weight:500; }
+  .op { color:var(--primary); margin-right:10px; }
+  .op.gone { color:#c0c4cc; text-decoration:line-through; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="side">
+    <div class="logo">WMS 仓储管理</div>
+    <a href="#">仪表盘</a>
+    <a href="#">入库作业</a>
+    <a href="#">出库作业</a>
+    <a href="#" class="active">库存管理</a>
+    <a href="#">盘点作业</a>
+    <a href="#">基础资料</a>
+  </nav>
+  <main class="main">
+    <h1>V1.1 业务字段只读 · 编辑弹窗效果图</h1>
+    <div class="sub">数据取自 V1.0 seed（IB-DEMO-0001 / OB-DEMO-0001 / B20261201），灰底虚线框为禁用字段</div>
+    <div class="hint">灰底字段由业务端点写入：状态走 DocStateMachine，数量走 InventoryCoreService。前端禁用只是第一层，后端通用 CRUD 另有字段白名单拦截。</div>
+    <div class="anchors">
+      <a href="#inbound">入库单</a><a href="#outbound">出库单</a><a href="#stocktake">盘点单</a><a href="#inventory">库存</a><a href="#ops">操作列变化</a>
+    </div>
+
+    <section class="card" id="inbound">
+      <h2>入库单主表 · 编辑</h2>
+      <div class="desc">views/wms_inbound_order/index.vue 弹窗（字段 12 个，禁用 4 个）</div>
+      <div class="grid">
+        <div class="item"><label>入库单号</label><div class="ctrl">IB-DEMO-0001</div></div>
+        <div class="item"><label>类型</label><div class="ctrl">采购入库</div></div>
+        <div class="item"><label>仓库 ID</label><div class="ctrl">1001</div></div>
+        <div class="item"><label>货主 ID</label><div class="ctrl">2001</div></div>
+        <div class="item"><label>供应商 ID</label><div class="ctrl">3001</div></div>
+        <div class="item"><label>外部单号</label><div class="ctrl">PO-20261107-01</div></div>
+        <div class="item"><label>状态</label><div class="ctrl locked">RECEIVING</div><span class="locknote">由业务端点写入（收货 / 上架）</span></div>
+        <div class="item"><label>预计到货日期</label><div class="ctrl">2026-11-09</div></div>
+        <div class="item"><label>操作人</label><div class="ctrl locked">1001</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>创建时间</label><div class="ctrl locked">2026-11-07 10:00:00</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>更新时间</label><div class="ctrl locked">2026-11-07 11:20:00</div><span class="locknote">由业务端点写入</span></div>
+      </div>
+      <div class="legend">保留可编辑：单号、类型、仓库、货主、供应商、外部单号、预计到货日期。数量在明细页，由「收货」「上架」弹窗录入。</div>
+    </section>
+
+    <section class="card" id="outbound">
+      <h2>出库单主表 · 编辑</h2>
+      <div class="desc">views/wms_outbound_order/index.vue 弹窗（字段 12 个，禁用 6 个）</div>
+      <div class="grid">
+        <div class="item"><label>出库单号</label><div class="ctrl">OB-DEMO-0001</div></div>
+        <div class="item"><label>类型</label><div class="ctrl">销售出库</div></div>
+        <div class="item"><label>仓库 ID</label><div class="ctrl">1001</div></div>
+        <div class="item"><label>货主 ID</label><div class="ctrl">2001</div></div>
+        <div class="item"><label>客户 ID</label><div class="ctrl">4001</div></div>
+        <div class="item"><label>外部单号</label><div class="ctrl">SO-20261107-01</div></div>
+        <div class="item"><label>状态</label><div class="ctrl locked">PICKED</div><span class="locknote">由业务端点写入（分配 / 拣货 / 发运）</span></div>
+        <div class="item"><label>优先级</label><div class="ctrl">1</div></div>
+        <div class="item"><label>承运商</label><div class="ctrl locked">顺丰速运</div><span class="locknote">由发运端点写入</span></div>
+        <div class="item"><label>运单号</label><div class="ctrl locked">SF1234567890</div><span class="locknote">由发运端点写入</span></div>
+        <div class="item"><label>创建时间</label><div class="ctrl locked">2026-11-07 10:05:00</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>更新时间</label><div class="ctrl locked">2026-11-07 11:30:00</div><span class="locknote">由业务端点写入</span></div>
+      </div>
+      <div class="legend">发运弹窗仍可录入承运商 / 运单号 —— 那是业务端点的合法入参，不在禁用范围。</div>
+    </section>
+
+    <section class="card" id="stocktake">
+      <h2>盘点单主表 · 编辑</h2>
+      <div class="desc">views/wms_stocktake_order/index.vue 弹窗（字段 8 个，禁用 4 个）</div>
+      <div class="grid">
+        <div class="item"><label>盘点单号</label><div class="ctrl">ST-20261107-01</div></div>
+        <div class="item"><label>仓库 ID</label><div class="ctrl">1001</div></div>
+        <div class="item"><label>库区 ID</label><div class="ctrl">1101</div></div>
+        <div class="item"><label>盘点类型</label><div class="ctrl">全盘</div></div>
+        <div class="item"><label>状态</label><div class="ctrl locked">FROZEN</div><span class="locknote">由业务端点写入（冻结 / 确认调整）</span></div>
+        <div class="item"><label>创建人</label><div class="ctrl locked">1001</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>创建时间</label><div class="ctrl locked">2026-11-07 10:10:00</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>确认时间</label><div class="ctrl locked">（未确认）</div><span class="locknote">由确认调整端点写入</span></div>
+      </div>
+    </section>
+
+    <section class="card" id="inventory">
+      <h2>库存 · 编辑</h2>
+      <div class="desc">views/wms_inventory/index.vue 弹窗（字段 13 个，禁用 6 个）—— V1.0 F-20 补做</div>
+      <div class="grid">
+        <div class="item"><label>仓库 ID</label><div class="ctrl">1001</div></div>
+        <div class="item"><label>货主 ID</label><div class="ctrl">2001</div></div>
+        <div class="item"><label>SKU ID</label><div class="ctrl">5001</div></div>
+        <div class="item"><label>库位 ID</label><div class="ctrl">1201</div></div>
+        <div class="item"><label>批次号</label><div class="ctrl">B20261201</div></div>
+        <div class="item"><label>生产日期</label><div class="ctrl">2026-06-01</div></div>
+        <div class="item"><label>到期日期</label><div class="ctrl">2026-12-01</div></div>
+        <div class="item"><label>在库数量</label><div class="ctrl locked">6.000</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>已分配数量</label><div class="ctrl locked">6.000</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>锁定数量</label><div class="ctrl locked">0.000</div><span class="locknote">由业务端点写入</span></div>
+        <div class="item"><label>可用数量（生成列）</label><div class="ctrl locked">0.000</div><span class="locknote">数据库生成列，不可写</span></div>
+        <div class="item"><label>版本号</label><div class="ctrl locked">3</div><span class="locknote">乐观锁，端点维护</span></div>
+      </div>
+      <div class="legend">禁用字段同时移除 rules.required，并给 defaultForm 设默认值，否则新增弹窗会被 validate 拦住。</div>
+    </section>
+
+    <section class="card" id="ops">
+      <h2>操作列与工具栏变化</h2>
+      <div class="desc">F-04：库存页去掉新增/删除，盘点页收敛创建入口</div>
+      <table>
+        <thead><tr><th>页面</th><th>改前</th><th>改后</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td>库存</td><td><span class="op gone">新增</span><span class="op">详情</span><span class="op gone">编辑</span><span class="op gone">删除</span></td><td><span class="op">详情</span><span class="op">查看流水</span><span class="op">刷新</span></td><td>V1.0 F-20 未落实</td></tr>
+          <tr><td>盘点单</td><td>生成器「新增盘点单表」+ 业务「新建盘点单」两套</td><td><span class="tag on">只留业务端点一个</span></td><td>避免绕过快照/冻结语义</td></tr>
+          <tr><td>入库单 / 出库单</td><td>详情 / 业务动作 / 编辑 / 删除</td><td>不变（编辑仍需维护主数据字段）</td><td>状态字段已禁用</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+</body>
+</html>
