@@ -1,0 +1,23 @@
+{
+  "run": "f2282b22",
+  "generatedAt": "2026-11-08T04:10:28.597Z",
+  "checks": 134,
+  "failures": 0,
+  "passed": true,
+  "concurrent": {
+    "scenario100": {
+      "requests": 100,
+      "succeeded": 100,
+      "rejected": 0,
+      "txns": 100,
+      "negative": false
+    },
+    "scenario150": {
+      "requests": 150,
+      "succeeded": 100,
+      "rejected": 50,
+      "txns": 100,
+      "negative": false
+    }
+  }
+}
